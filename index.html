@@ -9,25 +9,23 @@
     <meta charset="utf-8">
     
 	
-    <title>Crèche parentale à Colombes.</title>
-	<script>
-		
-	</script>
+    <title>box-sizing: border-box polyfill</title>
+	
     <style>
-		#toto {width:200px; padding: 10px 20px; border:7px solid black; background: red;behavior: expression( BorderBox(this));box-sizing:border-box;}
+		#foo {width:200px; padding: 10px 20px; border:7px solid black; background: red;behavior: expression( BorderBox(this));box-sizing:border-box;}
 	</style>
 
 </head>
 <body>
-	<div id="toto">width: </div>
+	<div id="foo">width: </div>
 	
     <img src="http://creche-galipette.fr/img/onxyM.jpg" />
 	
 	<input id="combien" />
-		
-		<button onclick="dodo();">clic</button>
+	<button onclick="bar();">Try</button>
 		<script>
 			
+			// function.bindd polyfill
 			if (!Function.prototype.bind) {
 			  Function.prototype.bind = function (oThis) {
 				if (typeof this !== "function") {
@@ -70,13 +68,11 @@
 			
 			BorderBox.Item.prototype = {
 				addEvents: function (){
-				console.log("event");
 					this.el.attachEvent("onpropertychange", this.computeSize.bind(this));
 				},
 				
 				computeSize: function (){
 					if(this.isLocked) {return;}
-					console.log("compute");
 					
 					// set lock to prevent unwanted recursivity (set width -> propertychange -> set width -> propertychange ....)
 					this.lock();
@@ -98,11 +94,11 @@
 					var bt = parseInt(cS.borderTopWidth) || 0;
 					var bb = parseInt(cS.borderBottomWidth) || 0;
 
-					// todo if width/height < (padding + border)
+					// TODO if width/height < (padding + border)
 					
 					
 					// apply new width/height if needed
-					console.log(w + "  :  " + h);
+					
 					if(!isNaN(w)) this.el.style.width = Math.max(0, (w - pl - pr - bl - br)) + "px";
 					if(!isNaN(h)) this.el.style.height = Math.max(0, (h - pt - pb - bt - bb)) + "px";
 					
@@ -121,13 +117,10 @@
 			
 			
 			
-			function dodo(){
-				document.getElementById("toto").style.height = document.getElementById("combien").value || 200;
-				document.getElementById("toto").style.width = document.getElementById("combien").value || 200;
-				
-				console.log(document.getElementById("toto").offsetWidth);
-				
-				//d.style.background = "rgb("+Math.floor(Math.random() * 255)+","+Math.floor(Math.random() * 255)+","+Math.floor(Math.random() * 255)+")";
+			function bar(){
+				var F = document.getElementById("foo");
+				F.style.height = document.getElementById("combien").value || 200;
+				F.style.width = document.getElementById("combien").value || 200;
 			}
 		</script>
     </body>
