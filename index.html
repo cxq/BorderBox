@@ -1,0 +1,134 @@
+<!doctype html>	
+
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="fr"> <![endif]--><!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8" lang="fr"> <![endif]--><!--[if IE 8]>
+<html class="no-js lt-ie9" lang="fr"> <![endif]--><!--[if gt IE 8]>
+<!--><html class="no-js" lang="fr"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    
+	
+    <title>Crèche parentale à Colombes.</title>
+	<script>
+		
+	</script>
+    <style>
+		#toto {width:200px; padding: 10px 20px; border:7px solid black; background: red;behavior: expression( BorderBox(this));box-sizing:border-box;}
+	</style>
+
+</head>
+<body>
+	<div id="toto">width: </div>
+	
+    <img src="http://creche-galipette.fr/img/onxyM.jpg" />
+	
+	<input id="combien" />
+		
+		<button onclick="dodo();">clic</button>
+		<script>
+			
+			if (!Function.prototype.bind) {
+			  Function.prototype.bind = function (oThis) {
+				if (typeof this !== "function") {
+				  // closest thing possible to the ECMAScript 5 internal IsCallable function
+				  throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+				}
+			 
+				var aArgs = Array.prototype.slice.call(arguments, 1), 
+					fToBind = this, 
+					fNOP = function () {},
+					fBound = function () {
+					  return fToBind.apply(this instanceof fNOP && oThis
+											 ? this
+											 : oThis,
+										   aArgs.concat(Array.prototype.slice.call(arguments)));
+					};
+			 
+				fNOP.prototype = this.prototype;
+				fBound.prototype = new fNOP();
+			 
+				return fBound;
+			  };
+			}
+			
+			
+			
+			function BorderBox(elm){
+				elm.style.behavior = "none";
+				new BorderBox.Item(elm);
+			}
+			
+			BorderBox.Item = function(el){
+				// set datas to instance
+				this.el = el;
+				this.isLocked = false;
+				
+				this.addEvents();
+				this.computeSize();
+			}
+			
+			BorderBox.Item.prototype = {
+				addEvents: function (){
+				console.log("event");
+					this.el.attachEvent("onpropertychange", this.computeSize.bind(this));
+				},
+				
+				computeSize: function (){
+					if(this.isLocked) {return;}
+					console.log("compute");
+					
+					// set lock to prevent unwanted recursivity (set width -> propertychange -> set width -> propertychange ....)
+					this.lock();
+
+					
+					// get values
+					var cS = this.el.currentStyle;
+					
+					var w =  parseInt(cS.width);
+					var h =  parseInt(cS.height);
+					
+					var pl = parseInt(cS.paddingLeft) || 0;
+					var pr = parseInt(cS.paddingRight) || 0;
+					var pt = parseInt(cS.paddingTop) || 0;
+					var pb = parseInt(cS.paddingBottom) || 0;
+					
+					var bl = parseInt(cS.borderLeftWidth) || 0;
+					var br = parseInt(cS.borderRightWidth) || 0;
+					var bt = parseInt(cS.borderTopWidth) || 0;
+					var bb = parseInt(cS.borderBottomWidth) || 0;
+
+					// todo if width/height < (padding + border)
+					
+					
+					// apply new width/height if needed
+					console.log(w + "  :  " + h);
+					if(!isNaN(w)) this.el.style.width = Math.max(0, (w - pl - pr - bl - br)) + "px";
+					if(!isNaN(h)) this.el.style.height = Math.max(0, (h - pt - pb - bt - bb)) + "px";
+					
+					
+					// free locl
+					this.unlock();
+				},
+				
+				lock: function (){
+					this.isLocked = true;
+				},
+				unlock: function (){
+					this.isLocked = false;
+				}
+			}
+			
+			
+			
+			function dodo(){
+				document.getElementById("toto").style.height = document.getElementById("combien").value || 200;
+				document.getElementById("toto").style.width = document.getElementById("combien").value || 200;
+				
+				console.log(document.getElementById("toto").offsetWidth);
+				
+				//d.style.background = "rgb("+Math.floor(Math.random() * 255)+","+Math.floor(Math.random() * 255)+","+Math.floor(Math.random() * 255)+")";
+			}
+		</script>
+    </body>
+</html>
