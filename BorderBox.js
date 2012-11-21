@@ -1,94 +1,107 @@
-// function.bind polyfill
-if (!Function.prototype.bind) {
-  Function.prototype.bind = function (oThis) {
-	if (typeof this !== "function") {
-	  // closest thing possible to the ECMAScript 5 internal IsCallable function
-	  throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
-	}
- 
-	var aArgs = Array.prototype.slice.call(arguments, 1), 
-		fToBind = this, 
-		/**
-		 * @constructor
-		 */
-		fNOP = function () {},
-		fBound = function () {
-		  return fToBind.apply(this instanceof fNOP && oThis
-								 ? this
-								 : oThis,
-							   aArgs.concat(Array.prototype.slice.call(arguments)));
-		};
- 
-	fNOP.prototype = this.prototype;
-	fBound.prototype = new fNOP();
- 
-	return fBound;
-  };
-}
+;
+(function (env) {
+    env.BorderBox = function (elm) {
+        elm.style.behavior = "none";
+        new BorderBox.Item(elm);
+    };
 
-var BorderBox = function(elm){
-	elm.style.behavior = "none";
-	new BorderBox.Item(elm);
-}
+    function setComputedWidth(elm, w, minw, maxw, paddingAndBorder) {
+        elm.style.minWidth = minw - paddingAndBorder + "px";
+        elm.style.width = ((w >= maxw) ? maxw + paddingAndBorder : (w <= minw) ? minw : w) - paddingAndBorder * 2 + "px";
+        elm.style.maxWidth = maxw - paddingAndBorder + "px";
+    }
 
-/**
- * @constructor
- */
-BorderBox.Item = function(el){
-	// set datas to instance
-	this.el = el;
-	this.isLocked = false;
-	
-	this.addEvents();
-	this.computeSize();
-}
+    function setComputedHeight(elm, h, minh, maxh, paddingAndBorder) {
+        elm.style.minHeight = minh - paddingAndBorder + "px";
+        elm.style.height = ((h >= maxh) ? maxh + paddingAndBorder : (h <= minh) ? minh : h) - paddingAndBorder * 2 + "px";
+        elm.style.maxHeight = maxh - paddingAndBorder + "px";
+    }
 
-BorderBox.Item.prototype = {
-	
-	addEvents: function (){
-		this.el.attachEvent("onpropertychange", this.computeSize.bind(this));
-	},
-	
-	computeSize: function (){
-		if(this.isLocked) {return;}
-		
-		// set lock to prevent unwanted recursivity (set width -> propertychange -> set width -> propertychange ....)
-		this.lock();
+    /**
+     * @constructor
+     */
+    BorderBox.Item = function (el) {
+        // set datas to instance
+        this.el = el;
 
-		
-		// get values
-		var cS = this.el.currentStyle;
-		
-		var w =  parseInt(cS.width, 10);
-		var h =  parseInt(cS.height, 10);
-		
-		var pl = parseInt(cS.paddingLeft, 10) || 0;
-		var pr = parseInt(cS.paddingRight, 10) || 0;
-		var pt = parseInt(cS.paddingTop, 10) || 0;
-		var pb = parseInt(cS.paddingBottom, 10) || 0;
-		
-		var bl = parseInt(cS.borderLeftWidth, 10) || 0;
-		var br = parseInt(cS.borderRightWidth, 10) || 0;
-		var bt = parseInt(cS.borderTopWidth, 10) || 0;
-		var bb = parseInt(cS.borderBottomWidth, 10) || 0;
+        this.originalMinWidth = parseInt(el.currentStyle.minWidth, 10) || 0;
+        this.originalMaxWidth = parseInt(el.currentStyle.maxWidth, 10) || 0;
 
-		// TODO if width/height < (padding + border)
-		
-		
-		// apply new width/height if needed
-		
-		if(!isNaN(w)) this.el.style.width = Math.max(0, (w - pl - pr - bl - br)) + "px";
-		if(!isNaN(h)) this.el.style.height = Math.max(0, (h - pt - pb - bt - bb)) + "px";
-		
-		
-		// free locl
-		this.unlock();
-	},
-	
-	lock: function (){
-		this.isLocked = true;
-	},
-	unlock: function (){
-		this.isLocked = false;
-	}
-}
+        this.originalMinHeight = parseInt(el.currentStyle.minHeight, 10) || 0;
+        this.originalMaxHeight = parseInt(el.currentStyle.maxHeight, 10) || 0;
+
+        this.el.style.minWidth = "0";
+        this.el.style.maxWidth = "none";
+        this.el.style.minHeight = "0";
+        this.el.style.maxHeight = "none";
+
+        this.isLocked = false;
+
+        this.addEvents();
+        this.computeSize();
+    }
+
+    BorderBox.Item.prototype = {
+
+        addEvents:function () {
+            var _this = this;
+            this.el.attachEvent("onpropertychange", function () {
+                _this.computeSize();
+            });
+        },
+
+        computeSize:function () {
+            if (this.isLocked) {return;}
+
+            // set lock to prevent unwanted recursivity (set width -> propertychange -> set width -> propertychange ....)
+            this.lock();
+
+            // get values
+            var cS = this.el.currentStyle;
+
+            //var w =  parseFloat(cS.width, 10) || 0;
+            var w = this.el.offsetWidth;
+            var minw = this.originalMinWidth;
+            var maxw = this.originalMaxWidth;
+            var minh = this.originalMinHeight;
+            var maxh = this.originalMaxHeight;
+
+
+            var h =this.el.offsetHeight;
+
+            var pl = parseFloat(cS.paddingLeft, 10) || 0;
+            var pr = parseFloat(cS.paddingRight, 10) || 0;
+            var pt = parseFloat(cS.paddingTop, 10) || 0;
+            var pb = parseFloat(cS.paddingBottom, 10) || 0;
+
+            var bl = parseFloat(cS.borderLeftWidth, 10) || 0;
+            var br = parseFloat(cS.borderRightWidth, 10) || 0;
+            var bt = parseFloat(cS.borderTopWidth, 10) || 0;
+            var bb = parseFloat(cS.borderBottomWidth, 10) || 0;
+
+            // TODO if width/height < (padding + border)
+
+
+            // apply new width/height if needed
+
+            setComputedWidth(this.el, w, minw, maxw, pl + pr + bl + br);
+            setComputedHeight(this.el, h, minh, maxh, pt + pb + bt + bb);
+
+
+            // free lock
+            this.unlock();
+        },
+
+        lock:function () {
+            this.isLocked = true;
+        },
+        unlock:function () {
+            this.isLocked = false;
+        }
+    }
+
+
+})(this);
+
+
+

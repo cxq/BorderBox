@@ -1,38 +1,67 @@
-<!doctype html>	
+<!doctype html>
 
 <!--[if lt IE 7]>
 <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="fr"> <![endif]--><!--[if IE 7]>
 <html class="no-js lt-ie9 lt-ie8" lang="fr"> <![endif]--><!--[if IE 8]>
 <html class="no-js lt-ie9" lang="fr"> <![endif]--><!--[if gt IE 8]>
-<!--><html class="no-js" lang="fr"> <!--<![endif]-->
+<!-->
+<html class="no-js" lang="fr"> <!--<![endif]-->
 <head>
     <meta charset="utf-8">
-    
-	
+
+
     <title>box-sizing: border-box polyfill</title>
-	<script src="BorderBox-min.js"></script>
+    <script src="BorderBox.js"></script>
     <style>
-		#foo {width:200px; padding: 20px; border:7px solid black; background: red;behavior: expression( BorderBox(this));box-sizing:border-box;}
-	</style>
+        #foo {
+            box-sizing: border-box;
+            *behavior: expression( BorderBox(this));
+
+            padding: 10px;
+            border: 1px solid black;
+            background: red;
+
+            max-width: 400px;
+            min-width: 200px;
+            max-height: 400px;
+            min-height: 200px;
+            width: 300px;
+            height: 300px;
+
+        }
+    </style>
 
 </head>
 <body>
-	<div id="foo">width: </div>
-	
-    <img src="http://creche-galipette.fr/img/onxyM.jpg" />
-	
-	<p>
-	<input id="combien" />
-	<button onclick="bar();">Try</button>
-	</p>
-		
-		<script>
-			function bar(){
-				var F = document.getElementById("foo");
-				F.style.height = document.getElementById("combien").value || 200;
-				F.style.width = document.getElementById("combien").value || 200;
-			}
-		</script>
-		
-    </body>
+<div style="width:400px;background:green;height:20px;"></div>
+<div id="foo"></div>
+
+<img src="http://creche-galipette.fr/img/onxyM.jpg"/>
+
+
+<p>
+    <input id="combien"/>
+    <button onclick="bar();">set</button>
+    <button onclick="setWidth(100);">shorten</button>
+    <button onclick="setWidth(600);">expand</button>
+</p>
+
+<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+
+<script type="text/javascript">
+    function setWidth(size) {
+        $("#foo").animate({"width":size, height: size}, 3000, function () {
+            console.log(this.offsetWidth);
+        });
+
+    }
+
+    function bar() {
+        var F = document.getElementById("foo");
+        F.style.height = (document.getElementById("combien").value || 300) + "px";
+        F.style.width = (document.getElementById("combien").value || 300) + "px";
+    }
+</script>
+
+</body>
 </html>
