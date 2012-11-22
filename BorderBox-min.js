@@ -1,36 +1,3 @@
-Function.prototype.bind || (Function.prototype.bind = function (a) {
-    if ("function" !== typeof this)throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
-    var c = Array.prototype.slice.call(arguments, 1), d = this, b = function () {
-    }, e = function () {
-        return d.apply(this instanceof b && a ? this : a, c.concat(Array.prototype.slice.call(arguments)))
-    };
-    b.prototype = this.prototype;
-    e.prototype = new b;
-    return e
-});
-var BorderBox = function (a) {
-    a.style.behavior = "none";
-    new BorderBox.Item(a)
-};
-BorderBox.Item = function (a) {
-    this.el = a;
-    this.isLocked = !1;
-    this.addEvents();
-    this.computeSize()
-};
-BorderBox.Item.prototype = {addEvents:function () {
-    this.el.attachEvent("onpropertychange", this.computeSize.bind(this))
-}, computeSize:function () {
-    if (!this.isLocked) {
-        this.lock();
-        var a = this.el.currentStyle, c = parseInt(a.width, 10), d = parseInt(a.height, 10), b = parseInt(a.paddingLeft, 10) || 0, e = parseInt(a.paddingRight, 10) || 0, f = parseInt(a.paddingTop, 10) || 0, g = parseInt(a.paddingBottom, 10) || 0, h = parseInt(a.borderLeftWidth, 10) || 0, i = parseInt(a.borderRightWidth, 10) || 0, j = parseInt(a.borderTopWidth, 10) || 0, a = parseInt(a.borderBottomWidth,
-            10) || 0;
-        isNaN(c) || (this.el.style.width = Math.max(0, c - b - e - h - i) + "px");
-        isNaN(d) || (this.el.style.height = Math.max(0, d - f - g - j - a) + "px");
-        this.unlock()
-    }
-}, lock:function () {
-    this.isLocked = !0
-}, unlock:function () {
-    this.isLocked = !1
-}};
+(function(d){function f(b,a,c,d,f,g,e){b.style[a]=d<e?"0px":d-e<=f?f-e+"px":d-e>=g?g-e+"px":d-2*e+"px";return b["offset"+c]}var a=parseFloat;d.BorderBox=function(b){b.style.behavior="none";new d.BorderBox.Item(b)};d.BorderBox.Item=function(b){var d=this,c=b.currentStyle;this.el=b;this.oMnW=a(c.minWidth)||0;this.oMnH=a(c.minHeight)||0;b.style.minWidth=b.style.minHeight=0;this.oMxW=a(c.maxWidth)||Infinity;this.oMxH=a(c.maxHeight)||Infinity;b.style.maxWidth=b.style.maxHeight="none";this.vGap=a(c.paddingTop)+
+    a(c.paddingBottom)+a(c.borderTopWidth)+a(c.borderBottomWidth);this.hGap=a(c.paddingLeft)+a(c.paddingRight)+a(c.borderLeftWidth)+a(c.borderRightWidth);this.isLocked=!1;this.oldH=this.oldW=0;this.el.attachEvent("onpropertychange",function(){d.computeSize()});this.computeSize()};d.BorderBox.Item.prototype={computeSize:function(){if(!this.isLocked){this.isLocked=!0;var b=this.el.offsetWidth,a=this.el.offsetHeight;this.oldW!=b&&(this.oldW=f(this.el,"width","Width",b,this.oMnW,this.oMxW,this.hGap));this.oldH!=
+    a&&(this.oldH=f(this.el,"height","Height",a,this.oMnH,this.oMxH,this.vGap));this.isLocked=!1}}}})(this);

@@ -1,65 +1,169 @@
 <!doctype html>
-
-<!--[if lt IE 7]>
-<html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="fr"> <![endif]--><!--[if IE 7]>
-<html class="no-js lt-ie9 lt-ie8" lang="fr"> <![endif]--><!--[if IE 8]>
-<html class="no-js lt-ie9" lang="fr"> <![endif]--><!--[if gt IE 8]>
-<!-->
-<html class="no-js" lang="fr"> <!--<![endif]-->
+<html lang="fr">
 <head>
     <meta charset="utf-8">
 
 
     <title>box-sizing: border-box polyfill</title>
+    <!--[if lte IE 7]>
     <script src="BorderBox.js"></script>
+    <![endif]-->
     <style>
-        #foo {
+        #redSquare, #greenSquare {
             box-sizing: border-box;
-            *behavior: expression( BorderBox(this));
 
             padding: 10px;
             border: 1px solid black;
-            background: red;
 
-            max-width: 400px;
-            min-width: 200px;
-            max-height: 400px;
-            min-height: 200px;
+            min-width: 50px;
             width: 300px;
-            height: 300px;
+            max-width: 500px;
+
+            min-height: 80px;
+            height: 100px;
+            max-height: 300px;
+
+            float: left;
 
         }
+
+        #redSquare {*behavior: expression(BorderBox(this));background: red;}
+        #greenSquare {*behavior: url(box-sizing.htc);background: green;}
+
+        pre {
+
+        }
+
+        #btn {
+            clear: both;
+        }
+
+        body {
+            padding: 20px 50px;
+            margin: 0;
+            border: none;
+        }
+
+        #resultRed{ color:red;float: left;margin-right: 15px;}
+        #resultGreen{ color:green;float: left;}
+        h2 {clear: left;}
+
+
     </style>
 
 </head>
 <body>
-<div style="width:400px;background:green;height:20px;"></div>
-<div id="foo"></div>
+    <h1>BorderBox.js</h1>
+    <p>The new way to use box-sizing: border-box on IE7 & IE6.</p>
+    <h2>Why use ?</h2>
+    <ul>
+        <li>it's very light: 1.1Ko (512o gzipped !)</li>
+        <li>it's very fast</li>
+        <li>it's understand minWidth, maxWidth, minHeight, maxHeight !</li>
+        <li>it's allow you to modify width/height.</li>
+        <li>it's allow you to animate your box-sized element !</li>
+        <li>IE7 got the exact same behavior than Chrome 22 and IE9.</li>
+        <li>Firefox 16 & 17  and IE8 got a different way of managing min/max width/height with box-sizing. (who is right? totally don't know, )</li>
+        <li>it's not a .htc</li>
+    </ul>
 
-<img src="http://creche-galipette.fr/img/onxyM.jpg"/>
+    <h2>How to ?</h2>
+    <ol>
+        <li>Just insert script (on top of page) between conditional comments for IE7 && IE6 (<code>&lt;!--[if lte IE 7]&gt;</code>)</li>
+        <li>Call the script by using: <code>*behavior: expression(BorderBox(this));</code> whenever you want in your css. But <code>* {*behavior: expression(BorderBox(this));}</code> is not recommended...</li>
+    </ol>
+    <p>That's it !</p>
+    <p>Note: the behavior is very bad for performace cause it's evaluating every time</p>
+    <p>Here, we cancel the behavior after the first evaluation, no more performance cavity !</p>
 
+    <h2>Could I see a demo ?</h2>
+    <p>yeah, just here !</p>
 
-<p>
-    <input id="combien"/>
-    <button onclick="bar();">set</button>
-    <button onclick="setWidth(100);">shorten</button>
-    <button onclick="setWidth(600);">expand</button>
-</p>
+    <p>Here, the css applied in this little benchmark between BorderBox.js (red square) et box-sizing.htc (green square)</p>
 
-<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+<pre>    #redSquare, #greenSquare {
+        box-sizing: border-box;
 
-<script type="text/javascript">
-    function setWidth(size) {
-        $("#foo").animate({"width":size, height: size}, 3000, function () {
-            console.log(this.offsetWidth);
-        });
+        padding: 10px;
+        border: 1px solid black;
+
+        min-width: 50px;
+        width: 300px;
+        max-width: 500px;
+
+        min-height: 80px;
+        height: 100px;
+        max-height: 300px;
+
+        float: left;
 
     }
 
-    function bar() {
-        var F = document.getElementById("foo");
-        F.style.height = (document.getElementById("combien").value || 300) + "px";
-        F.style.width = (document.getElementById("combien").value || 300) + "px";
+    #redSquare {*behavior: expression(BorderBox(this));background: red;}
+    #greenSquare {*behavior: url(box-sizing.htc);background: green;}
+
+    </pre>
+
+    <div id="redSquare"></div>
+    <div id="greenSquare"></div>
+
+
+
+    <p id="btn">
+        Try it baby !
+        <button onclick="setSize(100);">set to 100x100</button>
+        <button onclick="setSize(600);">set to 600x600</button>
+        <button onclick="setSizeFx(100);">animate to 100x100</button>
+        <button onclick="setSizeFx(600);">animate to 600x600</button>
+        <input id="combien"/>
+        <button onclick="setCustomSize();">set custom</button>
+        <button onclick="setCustomSizeFx();">animate custom</button>
+    </p>
+
+    <p id="resultRed"></p>
+    <p id="resultGreen"></p>
+
+    <h2>Conclusion</h2>
+    <p>I don't know if i made a bad use of box-sizing.htc, but in this use case (quit simple i think) it does not do the job.</p>
+    <p>If you found some bug, want to make any suggestion, tell me, fork and solve, fork and upgrade...</p>
+
+
+
+<script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+<script type="text/javascript">
+    F = document.getElementById("redSquare");
+    var F2 = document.getElementById("greenSquare");
+    R = document.getElementById("resultRed");
+    var R2 = document.getElementById("resultGreen");
+
+    function setSize(size) {
+        F.style.height = size + "px";
+        F.style.width = size + "px";
+
+        F2.style.height = size + "px";
+        F2.style.width = size + "px";
+
+        R.innerHTML = "offsetWidth: " + F.offsetWidth + "<br/>offsetHeight: " + F.offsetHeight;
+        R2.innerHTML = "offsetWidth: " + F2.offsetWidth + "<br/>offsetHeight: " + F2.offsetHeight;
+
+
+
+    }
+    function setSizeFx(size) {
+        jQuery(F).animate({width:size, height:size}, 1000, function () {
+            R.innerHTML = "offsetWidth: " + F.offsetWidth + "<br/>offsetHeight: " + F.offsetHeight;
+
+        });
+        jQuery(F2).animate({width:size, height:size}, 1000, function () {
+            R2.innerHTML = "offsetWidth: " + F2.offsetWidth + "<br/>offsetHeight: " + F2.offsetHeight;
+        });
+
+    }
+    function setCustomSize() {
+        setSize(document.getElementById("combien").value || 300);
+    }
+    function setCustomSizeFx() {
+        setSizeFx(document.getElementById("combien").value || 300);
     }
 </script>
 

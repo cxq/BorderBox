@@ -1,54 +1,54 @@
 /**
- * box-sizing Polyfill
- *
- * A polyfill for box-sizing: border-box for IE6 & IE7.
- *
- * JScript
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * See <http://www.gnu.org/licenses/lgpl-3.0.txt>
- *
- * @category  JScript
- * @package   box-sizing-polyfill
- * @author    Christian Schepp Schaefer <schaepp@gmx.de> <http://twitter.com/derSchepp>
- * @copyright 2012 Christian Schepp Schaefer
- * @license   http://www.gnu.org/copyleft/lesser.html The GNU LESSER GENERAL PUBLIC LICENSE, Version 3.0
- * @link      http://github.com/Schepp/box-sizing-polyfill
- *
- * PREFACE:
- *
- * This box-sizing polyfill is based on previous work done by Erik Arvidsson,
- * which he published in 2002 on http://webfx.eae.net/dhtml/boxsizing/boxsizing.html.
- *
- * USAGE:
- *
- * Add the behavior/HTC after every `box-sizing: border-box;` that you assign:
- *
- * box-sizing: border-box;
- * *behavior: url(/scripts/boxsizing.htc);`
- *
- * Prefix the `behavior` property with a star, like seen above, so it will only be seen by
- * IE6 & IE7, not by IE8+ who already implement box-sizing.
- *
- * The URL to the HTC file must be relative to your HTML(!) document, not relative to your CSS.
- * That's why I'd advise you to use absolute paths like in the example.
- *
- */
+* box-sizing Polyfill
+* 
+* A polyfill for box-sizing: border-box for IE6 & IE7.
+* 
+* JScript
+* 
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Lesser General Public License as published 
+* by the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+* 
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU Lesser General Public License for more details.
+* 
+* See <http://www.gnu.org/licenses/lgpl-3.0.txt>
+* 
+* @category  JScript 
+* @package   box-sizing-polyfill
+* @author    Christian Schepp Schaefer <schaepp@gmx.de> <http://twitter.com/derSchepp>
+* @copyright 2012 Christian Schepp Schaefer
+* @license   http://www.gnu.org/copyleft/lesser.html The GNU LESSER GENERAL PUBLIC LICENSE, Version 3.0
+* @link      http://github.com/Schepp/box-sizing-polyfill 
+*
+* PREFACE:
+*
+* This box-sizing polyfill is based on previous work done by Erik Arvidsson, 
+* which he published in 2002 on http://webfx.eae.net/dhtml/boxsizing/boxsizing.html.
+*
+* USAGE:
+* 	
+* Add the behavior/HTC after every `box-sizing: border-box;` that you assign:
+* 
+* box-sizing: border-box;
+* *behavior: url(/scripts/boxsizing.htc);`
+* 
+* Prefix the `behavior` property with a star, like seen above, so it will only be seen by 
+* IE6 & IE7, not by IE8+ who already implement box-sizing.
+*
+* The URL to the HTC file must be relative to your HTML(!) document, not relative to your CSS.
+* That's why I'd advise you to use absolute paths like in the example.
+*
+*/
 <component lightWeight="true">
-    <attach event="onpropertychange" onevent="checkPropertyChange()" />
-    <attach event="ondetach" onevent="restore()" />
-    <attach event="onresize" for="window" onevent="update()" />
-    <script type="text/javascript">
-    //<![CDATA[
+<attach event="onpropertychange" onevent="checkPropertyChange()" />
+<attach event="ondetach" onevent="restore()" />
+<attach event="onresize" for="window" onevent="update()" />
+<script type="text/javascript">
+//<![CDATA[
 
 var viewportwidth = (typeof window.innerWidth != 'undefined' ? window.innerWidth : element.document.documentElement.clientWidth);
 
@@ -497,5 +497,5 @@ function updateBorderBoxHeight() {
 init();
 
 //]]>
-    </script>
-/</component>
+</script>
+</component>
