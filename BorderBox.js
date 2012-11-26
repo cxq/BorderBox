@@ -1,7 +1,9 @@
 ;
 (function (scope) {
 
-    var f = parseFloat;
+    var f = function (what){
+        return parseFloat(what) || 0;
+    };
     var mnw = "minWidth",
         mxw = "maxWidth",
         mnh = "minHeight",
@@ -10,14 +12,15 @@
     scope.BorderBox = function (elm) {
         elm.style.behavior = "none";
         setPixelsInStyle(elm);
-        //new scope.BorderBox.Item(elm);
+        new scope.BorderBox.Item(elm);
     };
 
     function setComputed(elm, prop, Prop,val, min, max, gap) {
+        console.log("computed:" + elm+":"+ prop+":"+ Prop+":"+val+":"+ min+":"+ max+":"+ gap);
         if (val < gap)  elm.style[prop] = "0px";
         else if(val - gap <= min) elm.style[prop] = min - gap + "px";
         else if(val - gap >= max) elm.style[prop] = max - gap + "px";
-        else elm.style[prop] = val - gap*2 + "px";
+        else elm.style[prop] = val - gap *2 + "px";
         return elm["offset" + Prop];
     }
 
@@ -42,8 +45,8 @@
         this.oMxH = f(cS.maxHeight) || Infinity;
         el.style.maxWidth = el.style.maxHeight = "none";
 
-        this.vGap =  f(cS.paddingTop) + f(cS.paddingBottom) + f(cS.borderTopWidth) + f(cS.borderBottomWidth);
-        this.hGap =  f(cS.paddingLeft) + f(cS.paddingRight) + f(cS.borderLeftWidth) + f(cS.borderRightWidth);
+        this.vGap =  getVBorder(this.el) + getVPadding(this.el);
+        this.hGap =  getHBorder(this.el) + getHPadding(this.el);;
 
         this.isLocked = false;
         this.oldW = 0;
@@ -93,7 +96,8 @@
 
 
 
-            oldBorder   = cS["border"] || "";
+            oldBorderL   = cS["borderLeftWidth"] || 0;
+            oldBorderR   = cS["borderRightWidth"] || 0;
             oldPadding  = cS["padding"];
             oldWidth    = cS["width"];
             oldMinWidth = cS["minWidth"] || 0;
@@ -101,11 +105,10 @@
 
             borderH = elm.offsetWidth - elm.clientWidth;
 
-            console.log(borderH);
-
             // fontSize
 
-            elm.style.border   = "0px";
+            elm.style.borderLeftWidth   = "0px";
+            elm.style.borderRightWidth   = "0px";
             elm.style.padding  = "0 !important";
             elm.style.display  = "inline-block";
             elm.style.minWidth = "0";
@@ -115,7 +118,8 @@
             fontSize = elm.offsetWidth;
 
 
-            elm.style.border   = oldBorder;
+            elm.style.borderLeftWidth   = oldBorderL;
+            elm.style.borderRightWidth   = oldBorderR;
             elm.style.padding  = oldPadding;
             elm.style.display  = oldDisplay;
             elm.style.width    = oldWidth;
@@ -153,38 +157,51 @@
 
     function getElementPercentBase(elm){
         var p = elm.parentNode;
-        return
+        console.log("pc:" + ((p.offsetWidth - getHPadding(p) - getHBorder(p)) / 100));
+        return (p.offsetWidth - getHPadding(p) - getHBorder(p)) / 100;
     }
 
 
     function getHPadding(elm){
-        parseFloat(elm.currentStyle.paddingLeft) + parseFloat(elm.currentStyle.paddingRight);
+        return (f(elm.currentStyle.paddingLeft) + f(elm.currentStyle.paddingRight)) || 0;
     }
     function getVPadding(elm){
-        parseFloat(elm.currentStyle.paddingTop) + parseFloat(elm.currentStyle.paddingBottom);
+        return (f(elm.currentStyle.paddingTop) + f(elm.currentStyle.paddingBottom)) || 0;
+    }
+    function getHBorder(elm){
+        return (f(elm.currentStyle.borderLeftWidth) + f(elm.currentStyle.borderRightWidth)) || 0;
+    }
+    function getVBorder(elm){
+        return (f(elm.currentStyle.borderTopWidth) + f(elm.currentStyle.borderBottomWidth)) || 0;
     }
 
 
     scope.setPixelsInStyle = function(elm){
-        var r = /(\d+)(em|%)/g,
+
+        var r = /(.)+(em|%)/g,
             m,
             fs = false,
             pc = false;
 
         for(var p in elm.currentStyle){
             var v = ""+(elm.currentStyle[p]);
+
             if(!v) continue;
             var m = v.match(r);
             if(m ) {
                 for (var i = 0, l = m.length; i < l; i++) {
                     var o = m[i];
-                    if(/em/.test(o)){
+                    if(p == "fontSize"){
+                        (!fs) && (fs = getElementFontSize(elm));
+                        v = fs + "px";
+                    }
+                    else if(/em/.test(o)){
                         (!fs) && (fs = getElementFontSize(elm));
                         v = v.replace(o, parseFloat(o) * fs);
                     }
                     else {
                         // TODO
-                        (!pc) && (pc = 300 /100);
+                        (!pc) && (pc = getElementPercentBase(elm));
                         v = v.replace(o, parseFloat(o) * pc);
                     }
 
@@ -195,12 +212,6 @@
         if(fs) elm.style.fontSize = fs + "px";
 
     }
-
-
-    function getInnerWidth (){
-        // return offsetWidth - paddingH - borderH
-    }
-
 })(this);
 
 
