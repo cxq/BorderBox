@@ -4,22 +4,25 @@
     var f = function (what){
         return parseFloat(what) || 0;
     };
-    var mnw = "minWidth",
-        mxw = "maxWidth",
-        mnh = "minHeight",
-        mxh = "maxHeight";
 
-    scope.BorderBox = function (elm) {
+    scope.BorderBox = function (elm, val) {
         elm.style.behavior = "none";
         setPixelsInStyle(elm);
-        new scope.BorderBox.Item(elm);
+        new scope.BorderBox.Item(elm, val);
+
+    };
+
+    scope.BorderBoxWidth = function (elm) {
+        return BorderBox(elm, "width");
+    };
+    scope.BorderBoxHeight = function (elm) {
+        return BorderBox(elm, "height");
     };
 
     function setComputed(elm, prop, Prop,val, min, max, gap) {
-        console.log("computed:" + elm+":"+ prop+":"+ Prop+":"+val+":"+ min+":"+ max+":"+ gap);
         if (val < gap)  elm.style[prop] = "0px";
-        else if(val - gap <= min) elm.style[prop] = min - gap + "px";
-        else if(val - gap >= max) elm.style[prop] = max - gap + "px";
+        else if(val - gap <= min) elm.style[prop] = Math.max(0, max - gap) + "px";
+        else if(val - gap >= max) elm.style[prop] = Math.max(0, max - gap) + "px";
         else elm.style[prop] = val - gap *2 + "px";
         return elm["offset" + Prop];
     }
@@ -27,7 +30,19 @@
     /**
      * @constructor
      */
-    scope.BorderBox.Item = function (el) {
+    scope.BorderBox.Item = function (el, val) {
+        scope.BorderBox.index++;
+        if(!val){
+            this.lockWidth = false;
+            this.lockHeight = false;
+        }
+        else if(val == "width"){
+            this.lockHeight = true;
+        }
+        else if(val == "height"){
+            this.lockWidth = true;
+        }
+
         var _this = this,
             cS = el.currentStyle;
 
@@ -40,8 +55,8 @@
         this.oMnH = f(cS.minHeight) || 0;
         el.style.minWidth = el.style.minHeight = 0;
 
-        this.oMxW = f(cS.maxWidth) || Infinity;
-        console.log(this.oMxW);
+        this.oMxW = f(cS.maxWidth) || Infinity ;
+        //console.log(this.oMxW);
         this.oMxH = f(cS.maxHeight) || Infinity;
         el.style.maxWidth = el.style.maxHeight = "none";
 
@@ -64,6 +79,8 @@
     scope.BorderBox.Item.prototype = {
         computeSize:function () {
             if(this.isLocked) return;
+            var _this = this;
+
 
             // set lock to prevent unwanted recursivity (set width -> propertychange -> set width -> propertychange ....)
             this.isLocked = true;
@@ -72,13 +89,15 @@
             var w = this.el.offsetWidth,
                 h = this.el.offsetHeight;
 
-            if (this.oldW != w){ this.oldW = setComputed(this.el, "width", "Width",w, this.oMnW, this.oMxW, this.hGap );}
-            if (this.oldH != h){ this.oldH = setComputed(this.el, "height", "Height",h, this.oMnH, this.oMxH, this.vGap);}
+            if (this.oldW != w && !this.lockWidth){ this.oldW = setComputed(this.el, "width", "Width",w, this.oMnW, this.oMxW, this.hGap );}
+            if (this.oldH != h && !this.lockHeight){ this.oldH = setComputed(this.el, "height", "Height",h, this.oMnH, this.oMxH, this.vGap);}
 
             // free lock
             this.isLocked = false;
         }
     }
+
+
 
 
     scope.getElementFontSize = function(elm){
@@ -157,7 +176,7 @@
 
     function getElementPercentBase(elm){
         var p = elm.parentNode;
-        console.log("pc:" + ((p.offsetWidth - getHPadding(p) - getHBorder(p)) / 100));
+        //console.log("pc:" + ((p.offsetWidth - getHPadding(p) - getHBorder(p)) / 100));
         return (p.offsetWidth - getHPadding(p) - getHBorder(p)) / 100;
     }
 
@@ -206,10 +225,10 @@
                     }
 
                 }
-                elm.style[p] = v;
+                elm.runtimeStyle[p] = v;
             }
         }
-        if(fs) elm.style.fontSize = fs + "px";
+        if(fs) elm.runtimeStyle.fontSize = fs + "px";
 
     }
 })(this);
