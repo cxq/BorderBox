@@ -32,15 +32,17 @@
      */
     scope.BorderBox.Item = function (el, val) {
         scope.BorderBox.index++;
-        if(!val){
+         if(!val){
             this.lockWidth = false;
             this.lockHeight = false;
         }
         else if(val == "width"){
             this.lockHeight = true;
+            this.lockWidth = false;
         }
         else if(val == "height"){
             this.lockWidth = true;
+            this.lockHeight = false;
         }
 
         var _this = this,
@@ -53,12 +55,14 @@
         // and keep original value
         this.oMnW = f(cS.minWidth) || 0;
         this.oMnH = f(cS.minHeight) || 0;
-        el.style.minWidth = el.style.minHeight = 0;
+        if(!this.lockWidth) el.style[miw] 0;
+        if(!this.lockHeight)  el.style[mih] = 0;
 
         this.oMxW = f(cS.maxWidth) || Infinity ;
         //console.log(this.oMxW);
         this.oMxH = f(cS.maxHeight) || Infinity;
-        el.style.maxWidth = el.style.maxHeight = "none";
+         if(!this.lockHeight) el.style[maw] = "none";
+        if(!this.lockWidth) el.style[mah] = "none";
 
         this.vGap =  getVBorder(this.el) + getVPadding(this.el);
         this.hGap =  getHBorder(this.el) + getHPadding(this.el);;
