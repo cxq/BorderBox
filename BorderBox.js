@@ -61,8 +61,8 @@
         this.oMxW = f(cS.maxWidth) || Infinity ;
         //console.log(this.oMxW);
         this.oMxH = f(cS.maxHeight) || Infinity;
-         if(!this.lockHeight) el.style[maw] = "none";
-        if(!this.lockWidth) el.style[mah] = "none";
+         if(!this.lockWidth) el.style[maw] = "none";
+        if(!this.lockHeight) el.style[mah] = "none";
 
         this.vGap =  getVBorder(this.el) + getVPadding(this.el);
         this.hGap =  getHBorder(this.el) + getHPadding(this.el);;
