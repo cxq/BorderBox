@@ -152,28 +152,6 @@
 
     }
 
-    function getElementPercentBase(elm) {
-        var p = elm.parentNode;
-        return (p.offsetWidth - getHPadding(p) - getHBorder(p)) / 100;
-    }
-
-    function getHPadding(elm) {
-        return (f(elm.currentStyle.paddingLeft) + f(elm.currentStyle.paddingRight)) || 0;
-    }
-
-    function getVPadding(elm) {
-        return (f(elm.currentStyle.paddingTop) + f(elm.currentStyle.paddingBottom)) || 0;
-    }
-
-    function getHBorder(elm) {
-        return (f(elm.currentStyle.borderLeftWidth) + f(elm.currentStyle.borderRightWidth)) || 0;
-    }
-
-    function getVBorder(elm) {
-        return (f(elm.currentStyle.borderTopWidth) + f(elm.currentStyle.borderBottomWidth)) || 0;
-    }
-
-
     scope.BorderBox.Item.prototype.setPixelsInStyle = function (elm) {
 
         var r = /(.)+(em|%)/g,
@@ -208,6 +186,29 @@
             }
         }
         if (fs) elm.style.fontSize = fs + "px";
+    }
+
+    // HELPERS
+    
+    function getElementPercentBase(elm) {
+        var p = elm.parentNode;
+        return (p.offsetWidth - getHPadding(p) - getHBorder(p)) / 100;
+    }
+
+    function getHPadding(elm) {
+        return (f(elm.currentStyle.paddingLeft) + f(elm.currentStyle.paddingRight)) || 0;
+    }
+
+    function getVPadding(elm) {
+        return (f(elm.currentStyle.paddingTop) + f(elm.currentStyle.paddingBottom)) || 0;
+    }
+
+    function getHBorder(elm) {
+        return (f(elm.currentStyle.borderLeftWidth) + f(elm.currentStyle.borderRightWidth)) || 0;
+    }
+
+    function getVBorder(elm) {
+        return (f(elm.currentStyle.borderTopWidth) + f(elm.currentStyle.borderBottomWidth)) || 0;
     }
 })(this);
 
