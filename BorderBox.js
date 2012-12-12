@@ -12,9 +12,7 @@
 
     scope.BorderBox = function (elm, val) {
         elm.style.behavior = "none";
-
         new scope.BorderBox.Item(elm, val);
-
     };
 
     scope.BorderBoxWidth = function (elm) {
@@ -24,28 +22,17 @@
         return BorderBox(elm, "height");
     };
 
-    function setComputed(elm, prop, Prop, val, min, max, gap) {
-        if (val < gap)  elm.style[prop] = "0px";
-        else if (val - gap <= min) elm.style[prop] = Math.max(0, max - gap) + "px";
-        else if (val - gap >= max) elm.style[prop] = Math.max(0, max - gap) + "px";
-        else elm.style[prop] = val - gap * 2 + "px";
-        return elm["offset" + Prop];
-    }
-
     /**
      * @constructor
      */
     scope.BorderBox.Item = function (el, val) {
 
-        if (!val) {
-            this.lockWidth = false;
-            this.lockHeight = false;
-        }
-        else if (val == "width") {
+        this.lockWidth = this.lockHeight = false;
+        if (val && val == "width") {
             this.lockHeight = true;
             this.lockWidth = false;
         }
-        else if (val == "height") {
+        else if (val && val == "height") {
             this.lockWidth = true;
             this.lockHeight = false;
         }
@@ -90,8 +77,6 @@
         computeSize:function () {
 
             if (this.isLocked) return;
-
-
 
             // set lock to prevent unwanted recursivity (set width -> propertychange -> set width -> propertychange ....)
             this.isLocked = true;
@@ -189,7 +174,15 @@
     }
 
     // HELPERS
-    
+
+    function setComputed(elm, prop, Prop, val, min, max, gap) {
+        if (val < gap)  elm.style[prop] = "0px";
+        else if (val - gap <= min) elm.style[prop] = Math.max(0, max - gap) + "px";
+        else if (val - gap >= max) elm.style[prop] = Math.max(0, max - gap) + "px";
+        else elm.style[prop] = val - gap * 2 + "px";
+        return elm["offset" + Prop];
+    }
+
     function getElementPercentBase(elm) {
         var p = elm.parentNode;
         return (p.offsetWidth - getHPadding(p) - getHBorder(p)) / 100;
