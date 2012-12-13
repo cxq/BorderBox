@@ -37,7 +37,7 @@
             this.lockHeight = false;
         }
 
-        this.setPixelsInStyle(el);
+        //this.setPixelsInStyle(el);
 
         var _this = this,
             cS = el.currentStyle;
